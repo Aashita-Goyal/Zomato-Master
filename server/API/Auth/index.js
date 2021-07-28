@@ -11,37 +11,38 @@ import { UserModel } from "../../database/user/index.js";
 
 const Router = express.Router();
 
-/* 
-Route    
-Des      
-Params   
+/*   
+Route    /signup
+Des      Signup with email and password
+Params   none
 Access   public
-Method   
+Method   POST
 */
 Router.post("/signup", async (req,res) => {
     try {
-        const { email, password, fullname, phoneNumber } = req.body.credentials;
+       /* const { email, password, fullname, phoneNumber } = req.body.credentials; */
         //1. check whether email exists
-        const checkUserByEmail = await UserModel.findOne({ email });
+        /*const checkUserByEmail = await UserModel.findOne({ email });
         const checkUserByPhone = await UserModel.findOne({ phoneNumber });
 
         if (checkUserByEmail || checkUserByPhone) {
             return res.json({ error: "User already exists!" });
-        }
+        }*/
+        /*await UserModel.findByEmailAndPhone(email, phoneNumber);*/
+        await UserModel.findByEmailAndPhone(req.body.credentials);
 
             //1a. hash the password
-            const bcryptSalt = await bcrypt.genSalt(8);
+            /* const bcryptSalt = await bcrypt.genSalt(8);
 
-            const hashedPassword = await bcrypt.hash(password, bcryptSalt);
+            const hashedPassword = await bcrypt.hash(password, bcryptSalt); */
 
             //1b. save to database (db)
-            await UserModel.create({ 
-                ...req.body.credentials, 
-                password: hashedPassword,
-            });
+            /*await UserModel.create(req.body.credentials);*/
+            const newUser = await UserModel.create(req.body.credentials);
 
         //2. generate JWT auth token
-        const token = jwt.sign({ user: { fullname, email } }, "ZomatoAPP" );
+          /*const token = jwt.sign({ user: { fullname, email } }, "ZomatoAPP" );*/
+          const token = newUser.generateJwtTokens();
 
         //3. return
         return res.status(200).json({ token, status: "success" });
@@ -52,7 +53,28 @@ Router.post("/signup", async (req,res) => {
 });
 
 
+/* 
+Route    /signin
+Des      Register new user
+Params   none
+Access   public
+Method   POST
+*/
+Router.post("/", async (req,res) => {
+    try {
+         return res.status(200).json({ token, status: "success" });
+    }catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+});
+
+
+
+
 export default Router;
+
+
+
 
 
 
@@ -74,7 +96,7 @@ Method
 /*
 Router.post("/", async (req,res) => {
     try {
-        const 
+         return res.status(200).json({ token, status: "success" });
     }catch (error) {
         return res.status(500).json({ error: error.message });
     }
