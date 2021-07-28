@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
-const FoodSchema = new mongoose.Schema({
+const FoodSchema = new mongoose.Schema(
+{
     name: { type: String, required: true },
     descript: { type: String, required: true },
     isVeg: { type: Boolean, required: true},
@@ -21,7 +22,11 @@ restaurant:{
         ref: "Restaurants",
         required: true,
 },
-});
+},
+{
+    timestamps: true,   //createdAt, updatedAt
+}
+);
 
 
 

@@ -1,0 +1,13 @@
+API planning
+
+-Auth (authentication  )
+-Foods
+-Restaurants
+-Menu
+-Order
+-Payments - razorpay
+-Reviews
+-User
+-Image
+
+
