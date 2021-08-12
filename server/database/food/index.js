@@ -30,4 +30,4 @@ restaurant:{
 
 
 
-export const FoodModel  = mogoose.model("Foods", FoodSchema);
+export const FoodModel  = mongoose.model("Foods", FoodSchema);

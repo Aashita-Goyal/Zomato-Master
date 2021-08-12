@@ -2,6 +2,7 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import passport from "passport";
 
 //Models
 import { UserModel } from "../../database/user/index.js";
@@ -55,18 +56,67 @@ Router.post("/signup", async (req,res) => {
 
 /* 
 Route    /signin
-Des      Register new user
+Des      signin with email and pasword
 Params   none
 Access   public
 Method   POST
 */
-Router.post("/", async (req,res) => {
+Router.post("/signin", async (req,res) => {
     try {
-         return res.status(200).json({ token, status: "success" });
+        const user = await UserModel.findByEmailAndPassword(
+            req.body.credentials
+        );
+
+        const token = user.generateJwtToken();
+        return res.status(200).json({ token, status: "success" });
     }catch (error) {
         return res.status(500).json({ error: error.message });
     }
 });
+
+
+/*
+Route     /google
+Des       Google Signin
+Params    none
+Access    Public
+Method    GET  
+*/
+Router.get("/google", passport.authenticate("google", {
+      scope: [
+        "https://www.googleapis.com/auth/userinfo.profile",
+        "https://www.googleapis.com/auth/userinfo.email",
+      ],
+    })
+  );
+  
+
+  /*
+  Route     /google/callback
+  Des       Google Signin Callback
+  Params    none
+  Access    Public
+  Method    GET  
+  */
+  /* Router.get("/google/callback", passport.authenticate(
+      'google', { failureRedirect: "/" }),
+    (req, res) => {
+      return res.json({ token: req.session.passport.user.token });
+    }
+  ); */
+  Router.get("/google/callback", passport.authenticate(
+    'google'),
+    (err, req, res, next) => { // custom error handler to catch any errors, such as TokenError
+        if (err.name === 'TokenError') {
+         res.redirect('/auth/google'); // redirect them back to the login page
+        } else {
+         // Handle other errors here
+        }
+      },
+      (req, res) => {
+        return res.json({ token: req.session.passport.user.token });
+      }
+);
 
 
 
@@ -96,7 +146,7 @@ Method
 /*
 Router.post("/", async (req,res) => {
     try {
-         return res.status(200).json({ token, status: "success" });
+        return res.status(200).json({ token, status: "success" });
     }catch (error) {
         return res.status(500).json({ error: error.message });
     }
