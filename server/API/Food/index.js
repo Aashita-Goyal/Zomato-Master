@@ -5,6 +5,9 @@ import passport from "passport";
 //Database modal
 import { FoodModel } from "../../database/allModels.js";
 
+//validation
+import { ValidateRestaurantId, Validatecategory } from "../../validation/food.js"
+
 const Router = express.Router();
 
 /*
@@ -15,7 +18,14 @@ Access    Public
 Method    GET
 */
 Router.get("/r/:_id", async (req,res) => {
+
+    //.......validation.....
+    //(logic will accesed ONLY IF validation is succesful)
+
     try{
+
+        await ValidateRestaurantId(req.params);
+
         const { _id } = req.params;
         const foods = await FoodModel.find({ restaurant: _id });
 
@@ -35,6 +45,9 @@ Method    GET
 */
 Router.get("/c/:category", async (req,res) => {
     try{
+
+        await Validatecategory(req.params);
+
         const { category } = req.params;
         const foods = await FoodModel.find({ 
             category: { $regex: category, $options: "i"}, 

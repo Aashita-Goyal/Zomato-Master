@@ -6,8 +6,11 @@ import multer from "multer";
 //Database modal
 import { ImageModel } from "../../database/allModels.js";
 
+//Validation
+//import { ValidateImageUpload } from "../../validation/image.js";
+
 //Utilities
-import { s3Upload } from "../../database/allModels.js";
+import { s3Upload } from "../../Utils/AWS/s3.js";
 
 const Router = express.Router();
 
@@ -28,6 +31,9 @@ Method    POST
 */
 Router.post("/", upload.single("file"), async (req,res) => {
     try{
+        await ValidateImageUpload(req.file);
+
+
         //upload to s3
         const file = req.file;
 

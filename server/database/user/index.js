@@ -20,7 +20,7 @@ UserSchema.methods.generateJwtToken = function () {
 };
 
 UserSchema.statics.findByEmailAndPhone = async ({ email, phoneNumber }) => {
-  // check whether email exist
+  // check whether email or phonenumer exist
   const checkUserByEmail = await UserModel.findOne({ email });
   const checkUserByPhone = await UserModel.findOne({ phoneNumber });
 
